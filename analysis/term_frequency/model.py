@@ -42,7 +42,7 @@ class GPTNeoLM(BaseLM):
             )
 
         # TODO: update this to be less of a hack once subfolder is fixed in HF
-        revision = revision + ("/" + subfolder if subfolder is not None else "")
+        revision = revision + (f"/{subfolder}" if subfolder is not None else "")
 
         self.gpt2 = transformers.AutoModelForCausalLM.from_pretrained(
             pretrained,
@@ -126,7 +126,7 @@ class GPTNeoLM(BaseLM):
 
         tokenizer_args = {"add_special_tokens": False, "return_tensors": "pt"}
 
-        if (type(strings) == list) or type(strings) == tuple:
+        if type(strings) in [list, tuple]:
             return self.tokenizer.batch_encode_plus(strings, padding=True, **tokenizer_args)
         elif type(strings) == str:
             return self.tokenizer.encode(strings, **tokenizer_args)

@@ -69,10 +69,7 @@ class NumericalReasoningBaseTask(Task):
             language description, as well as the few shot examples, and the question
             part of the document for `doc`.
         """
-        # NOTE: The paper implements "verifiers" that assign a score to multiple
-        # solutions and output the highest ranked solution.
-        completion = rf.greedy_until(ctx, "\n")
-        return completion
+        return rf.greedy_until(ctx, "\n")
 
     def _get_answer(self, doc):
         raise NotImplementedError
@@ -89,10 +86,7 @@ class NumericalReasoningBaseTask(Task):
         """
         # completion = results[0]
         digits = re.findall('\d{1,5}', results[0])
-        if len(digits) == 0:
-            completion = ""
-        else:
-            completion = digits[0]
+        completion = "" if len(digits) == 0 else digits[0]
         gold = self.doc_to_target(doc)
         acc = 1.0 if completion == gold else 0.0
 
@@ -119,9 +113,8 @@ class ArithmeticMultiplication(NumericalReasoningBaseTask):
 
     def __init__(self, DATASET_NAME):
         super().__init__(DATASET_NAME=DATASET_NAME)
-        self.EVAL_HARNESS_NAME = "{}_{}".format(
-            "num_reasoning_arithmetic_multiplication",
-            self.DATASET_NAME
+        self.EVAL_HARNESS_NAME = (
+            f"num_reasoning_arithmetic_multiplication_{self.DATASET_NAME}"
         )
 
     def doc_to_text(self, doc):
@@ -135,9 +128,8 @@ class ArithmeticAddition(NumericalReasoningBaseTask):
 
     def __init__(self, DATASET_NAME):
         super().__init__(DATASET_NAME=DATASET_NAME)
-        self.EVAL_HARNESS_NAME = "{}_{}".format(
-            "num_reasoning_arithmetic_addition",
-            self.DATASET_NAME
+        self.EVAL_HARNESS_NAME = (
+            f"num_reasoning_arithmetic_addition_{self.DATASET_NAME}"
         )
 
     def doc_to_text(self, doc):
@@ -151,9 +143,8 @@ class OperationInferenceMult(NumericalReasoningBaseTask):
 
     def __init__(self, DATASET_NAME):
         super().__init__(DATASET_NAME=DATASET_NAME)
-        self.EVAL_HARNESS_NAME = "{}_{}".format(
-            "num_reasoning_op_infer_multiplication",
-            self.DATASET_NAME
+        self.EVAL_HARNESS_NAME = (
+            f"num_reasoning_op_infer_multiplication_{self.DATASET_NAME}"
         )
 
     def doc_to_text(self, doc):
@@ -167,10 +158,7 @@ class OperationInferenceAdd(NumericalReasoningBaseTask):
 
     def __init__(self, DATASET_NAME):
         super().__init__(DATASET_NAME=DATASET_NAME)
-        self.EVAL_HARNESS_NAME = "{}_{}".format(
-            "num_reasoning_op_infer_addition",
-            self.DATASET_NAME
-        )
+        self.EVAL_HARNESS_NAME = f"num_reasoning_op_infer_addition_{self.DATASET_NAME}"
 
     def doc_to_text(self, doc):
         return "Q:What is {x1} # {x2}? A:".format(**doc)
@@ -185,10 +173,7 @@ class TimeUnitInferenceMinSec(NumericalReasoningBaseTask):
 
     def __init__(self, DATASET_NAME):
         super().__init__(DATASET_NAME=DATASET_NAME)
-        self.EVAL_HARNESS_NAME = "{}_{}".format(
-            "num_reasoning_convert_min_sec",
-            self.DATASET_NAME
-        )
+        self.EVAL_HARNESS_NAME = f"num_reasoning_convert_min_sec_{self.DATASET_NAME}"
 
     def doc_to_text(self, doc):
         return "Q:What is {x} minutes in seconds? A:".format(**doc)
@@ -201,10 +186,7 @@ class TimeUnitInferenceHourMin(TimeUnitInferenceMinSec):
 
     def __init__(self, DATASET_NAME):
         super().__init__(DATASET_NAME=DATASET_NAME)
-        self.EVAL_HARNESS_NAME = "{}_{}".format(
-            "num_reasoning_convert_hour_min",
-            self.DATASET_NAME
-        )
+        self.EVAL_HARNESS_NAME = f"num_reasoning_convert_hour_min_{self.DATASET_NAME}"
 
     def doc_to_text(self, doc):
         return "Q:What is {x} hours in minutes? A:".format(**doc)
@@ -217,10 +199,7 @@ class TimeUnitInferenceDayHour(TimeUnitInferenceMinSec):
 
     def __init__(self, DATASET_NAME):
         super().__init__(DATASET_NAME=DATASET_NAME)
-        self.EVAL_HARNESS_NAME = "{}_{}".format(
-            "num_reasoning_convert_day_hour",
-            self.DATASET_NAME
-        )
+        self.EVAL_HARNESS_NAME = f"num_reasoning_convert_day_hour_{self.DATASET_NAME}"
 
     def doc_to_text(self, doc):
         return "Q:What is {x} days in hours? A:".format(**doc)
@@ -233,10 +212,7 @@ class TimeUnitInferenceWeekDay(TimeUnitInferenceMinSec):
 
     def __init__(self, DATASET_NAME):
         super().__init__(DATASET_NAME=DATASET_NAME)
-        self.EVAL_HARNESS_NAME = "{}_{}".format(
-            "num_reasoning_convert_week_day",
-            self.DATASET_NAME
-        )
+        self.EVAL_HARNESS_NAME = f"num_reasoning_convert_week_day_{self.DATASET_NAME}"
 
     def doc_to_text(self, doc):
         return "Q:What is {x} weeks in days? A:".format(**doc)
@@ -249,9 +225,8 @@ class TimeUnitInferenceMonthWeek(TimeUnitInferenceMinSec):
 
     def __init__(self, DATASET_NAME):
         super().__init__(DATASET_NAME=DATASET_NAME)
-        self.EVAL_HARNESS_NAME = "{}_{}".format(
-            "num_reasoning_convert_month_week",
-            self.DATASET_NAME
+        self.EVAL_HARNESS_NAME = (
+            f"num_reasoning_convert_month_week_{self.DATASET_NAME}"
         )
 
     def doc_to_text(self, doc):
@@ -265,9 +240,8 @@ class TimeUnitInferenceYearMonth(TimeUnitInferenceMinSec):
 
     def __init__(self, DATASET_NAME):
         super().__init__(DATASET_NAME=DATASET_NAME)
-        self.EVAL_HARNESS_NAME = "{}_{}".format(
-            "num_reasoning_convert_year_month",
-            self.DATASET_NAME
+        self.EVAL_HARNESS_NAME = (
+            f"num_reasoning_convert_year_month_{self.DATASET_NAME}"
         )
 
     def doc_to_text(self, doc):
@@ -281,9 +255,8 @@ class TimeUnitInferenceDecadeYear(TimeUnitInferenceMinSec):
 
     def __init__(self, DATASET_NAME):
         super().__init__(DATASET_NAME=DATASET_NAME)
-        self.EVAL_HARNESS_NAME = "{}_{}".format(
-            "num_reasoning_convert_decade_year",
-            self.DATASET_NAME
+        self.EVAL_HARNESS_NAME = (
+            f"num_reasoning_convert_decade_year_{self.DATASET_NAME}"
         )
 
     def doc_to_text(self, doc):

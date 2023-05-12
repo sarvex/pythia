@@ -44,8 +44,8 @@ def process_memorization_over_time(models, checkpoints):
         evals = memorization_results[f'{model}-146m']
         evals = evals[evals['index'] < max_sequence_index]
         ground_truth = evals['accuracy'] == 1
-        
-        for idx, checkpoint in enumerate(checkpoints):
+
+        for checkpoint in checkpoints:
             evals = memorization_results[f'{model}-{checkpoint}']
             evals = evals[evals['index'] < max_sequence_index]
             prediction = evals['accuracy'] == 1
@@ -62,8 +62,13 @@ def process_memorization_over_time(models, checkpoints):
             ax.set_ylabel("Predicted Labels")
             ax.yaxis.set_ticklabels(['1', '0'])
 
-            ax.set_title("Predicting Memorization of Last Checkpoint\nModel Size {}, Checkpoint {}".format(model, checkpoint))
-            plt.savefig('../../results/graphs/memorization_early_checkpoint_predict_last_checkpoint/graph_{}_{}.svg'.format(model, checkpoint), dpi=300)
+            ax.set_title(
+                f"Predicting Memorization of Last Checkpoint\nModel Size {model}, Checkpoint {checkpoint}"
+            )
+            plt.savefig(
+                f'../../results/graphs/memorization_early_checkpoint_predict_last_checkpoint/graph_{model}_{checkpoint}.svg',
+                dpi=300,
+            )
             plt.clf()
 
             cm_rate_df = pd.concat(
@@ -126,7 +131,7 @@ def process_memorization_over_size(models, checkpoints):
         evals = memorization_results[f'13b-{checkpoint}']
         evals = evals[evals['index'] < max_sequence_index]
         ground_truth = evals['accuracy'] == 1
-        
+
         for model in models:
             evals = memorization_results[f'{model}-{checkpoint}']
             evals = evals[evals['index'] < max_sequence_index]
@@ -144,8 +149,13 @@ def process_memorization_over_size(models, checkpoints):
             ax.set_ylabel("Predicted Labels")
             ax.yaxis.set_ticklabels(['1', '0'])
 
-            ax.set_title("Predicting Memorization of Largest Size\nModel Size {}, Checkpoint {}".format(model, checkpoint))
-            plt.savefig('../../results/graphs/memorization_small_model_predict_large_model/graph_{}_{}.svg'.format(model, checkpoint), dpi=300)
+            ax.set_title(
+                f"Predicting Memorization of Largest Size\nModel Size {model}, Checkpoint {checkpoint}"
+            )
+            plt.savefig(
+                f'../../results/graphs/memorization_small_model_predict_large_model/graph_{model}_{checkpoint}.svg',
+                dpi=300,
+            )
             plt.clf()
 
             cm_rate_df = pd.concat(
@@ -186,11 +196,10 @@ def rate_of_memorization(models, checkpoints):
     max_sequence_index = 23000*1024
     for model in models:
         
-        for idx, checkpoint in enumerate(checkpoints):
-
+        for checkpoint in checkpoints:
             # max_sequence_index = int(n_steps[idx]) * 1024
 
-            evals = memorization_results[f'{model}-{checkpoint}']    
+            evals = memorization_results[f'{model}-{checkpoint}']
             evals = evals[evals['index'] < max_sequence_index]
             prediction = evals['accuracy'] == 1
 

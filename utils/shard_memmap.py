@@ -11,7 +11,7 @@ def shard(
 ):
     """Shard a Megatron .bin file into ~ 4.5 GB chunks"""
     SHARD_SIZE = 5_000_000_000 # bytes ~= 4.5 GB 
-    
+
     # load in memmapped .bin file
     full_idx_map = np.memmap(input_file, mode="r", order="C")
 
@@ -29,7 +29,7 @@ def shard(
         else:
             chunk = full_idx_map[start_idx:end_idx]
 
-        shard_filename = os.path.join(output_dir, os.path.basename(input_file)[:-4]) + f"-{i:05}-of-{num_chunks:05}.bin"
+        shard_filename = f"{os.path.join(output_dir, os.path.basename(input_file)[:-4])}-{i:05}-of-{num_chunks:05}.bin"
         with open(shard_filename, "wb+") as out_shard_file:
             print(f"Dumping shard {i:05} to {shard_filename} ...")
             chunk.tofile(out_shard_file)

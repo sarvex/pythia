@@ -20,11 +20,10 @@ show_checkpoints = list(range(eval_steps, max_steps+eval_steps, 2*eval_steps))
 
 freq = {}
 _freq = Counter()
-for idx, checkpoint in enumerate(checkpoint_list):
-
+for checkpoint in checkpoint_list:
     checkpoint_path = os.path.join("results", f"frequency_count_checkpoint_{checkpoint}.npy")
     _dict = np.load(checkpoint_path, allow_pickle=True)[()]
-    _freq.update(_dict)
+    _freq |= _dict
     freq[checkpoint] = _freq.copy()
 
 def jitter(values, j=0):
@@ -77,7 +76,7 @@ def graph_plot(model_list, single_row=True, prefix="figure"):
                 for i in range(0, 100):
                     count = str(i)
                     x.append(_freq[count])
-                    y.append(df[df['task'].str.contains("_"+count)]['acc'].values[0])
+                    y.append(df[df['task'].str.contains(f"_{count}")]['acc'].values[0])
                     z.append(str(checkpoint))
 
             data = pd.DataFrame(
@@ -105,19 +104,14 @@ def graph_plot(model_list, single_row=True, prefix="figure"):
                 hue='checkpoint',
                 marker="o",
                 errorbar=None,
-                legend=False if idx != (len(model_list)-1) else True
+                legend=idx == len(model_list) - 1,
             )
 
             if idx == len(model_list)-1:
                 plt.legend(bbox_to_anchor=(1.05, 1), loc='upper left', borderaxespad=0)
 
-            if single_row:
-                if idx != 0:
-                    ax.tick_params(labelleft=False, left=False)
-            else:
-                if y_idx != 0:
-                    ax.tick_params(labelleft=False, left=False)
-
+            if single_row and idx != 0 or not single_row and y_idx != 0:
+                ax.tick_params(labelleft=False, left=False)
             ax.set(xscale="log")
             ax.set(ylim=(0.0, 1.0))
             ax.set_xlabel(f"\n({alphabet}) {size}")
@@ -188,7 +182,7 @@ for task in tqdm(task_names):
                     count = str(i)
                     c.append(_freq[count])
                     x.append(i)
-                    y.append(df[df['task'].str.contains("_"+count)]['acc'].values[0])
+                    y.append(df[df['task'].str.contains(f"_{count}")]['acc'].values[0])
 
                 data = pd.DataFrame(
                     data={

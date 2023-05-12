@@ -28,8 +28,7 @@ checkpoint_list = list(range(eval_steps, max_steps+eval_steps, 2*eval_steps))
 
 few_shot_list = [16, 8, 4, 2, 0]
 
-task_names = []
-task_names.extend([ArithmeticMultiplication(str(num)) for num in range(0,100)])
+task_names = [ArithmeticMultiplication(str(num)) for num in range(0,100)]
 task_names.extend([ArithmeticAddition(str(num)) for num in range(0,100)])
 
 def evaluate_num_reasoning(model_name, device, batch_size=64, output_dir="results/"):
@@ -38,14 +37,16 @@ def evaluate_num_reasoning(model_name, device, batch_size=64, output_dir="result
     for checkpoint in checkpoint_list:
 
         model_size = model_name.split("/")[-1]
-        model_args="pretrained={},revision=step{}".format(model_name, checkpoint)
-        print("Building Model, {}".format(model_args))
+        model_args = f"pretrained={model_name},revision=step{checkpoint}"
+        print(f"Building Model, {model_args}")
         model = GPTNeoLM.create_from_arg_string(
             model_args, {"batch_size": batch_size, "device": device}
         )
 
         for n in few_shot_list:
-            print("processing {} at step: {} with batch size {} and {}-shots".format(model_name, checkpoint, batch_size, n))
+            print(
+                f"processing {model_name} at step: {checkpoint} with batch size {batch_size} and {n}-shots"
+            )
 
             results = evaluator.simple_evaluate(
                 model=model,
@@ -64,7 +65,7 @@ def evaluate_num_reasoning(model_name, device, batch_size=64, output_dir="result
                 output_dir,
                 "json",
                 model_size,
-                "term_frequency-{}-{}-{}shot.json".format(model_size, checkpoint, str(n).zfill(2))
+                f"term_frequency-{model_size}-{checkpoint}-{str(n).zfill(2)}shot.json",
             )
             with open(output_dict_dir, "w") as f:
                 f.write(dumped)
@@ -82,7 +83,7 @@ def evaluate_num_reasoning(model_name, device, batch_size=64, output_dir="result
                     [all_results_df, pd.Series(results_dict).to_frame().T],
                     ignore_index=True
                     )
-        
+
         output_csv_path = os.path.join(output_dir, "csv", model_size)
         os.makedirs(output_csv_path, exist_ok=True)
         all_results_df.to_csv(
@@ -109,7 +110,7 @@ if __name__ == "__main__":
             output_dir=args.output_dir,
             )
     else:
-        for idx, (model_name, batch_size) in enumerate(model_list):
+        for model_name, batch_size in model_list:
             evaluate_num_reasoning(
                 model_name=model_name,
                 device=device,

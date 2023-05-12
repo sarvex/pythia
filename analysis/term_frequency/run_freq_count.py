@@ -46,7 +46,7 @@ def count_for_checkpoint(path, checkpoint, output_path):
         lines = tokenizer.batch_decode(raw_lines)
 
         for line in lines:
-            line = " "+line
+            line = f" {line}"
             matches = re.finditer(search_string_lazy, line)
             for window in [m.group(1) for m in matches]:
 
